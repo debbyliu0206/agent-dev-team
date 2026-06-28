@@ -1,86 +1,51 @@
-# agent-dev-team
+# agent-dev-team — Multi-Agent ADK Software-Dev System
 
-Simple ReAct agent
-Agent generated with `agents-cli` version `0.5.0`
+A layered, contract-first multi-agent pipeline (Google ADK + Gemini) that turns requirements into a tested backend. Dogfooded to produce a fully-green (59/59) Study Tracker backend.
 
-## Project Structure
+## Architecture diagrams
 
-```
-agent-dev-team/
-├── app/         # Core agent code
-│   ├── agent.py               # Main agent logic
-│   └── app_utils/             # App utilities and helpers
-├── tests/                     # Unit, integration, and load tests
-├── GEMINI.md                  # AI-assisted development guide
-└── pyproject.toml             # Project dependencies
-```
+The following 3 diagrams are in `docs/diagrams/` and can be opened at [excalidraw.com](https://excalidraw.com):
 
-> 💡 **Tip:** Use [Gemini CLI](https://github.com/google-gemini/gemini-cli) for AI-assisted development - project context is pre-configured in `GEMINI.md`.
+- **agent-system-v1**: the first design and why it didn't converge (swung 47%-76%).
+- **agent-system-final**: the optimized layered pipeline.
+- **agent-system-journey**: the optimization route (each fix dogfooded from a real failing run).
 
-## Requirements
+## Agents
 
-Before you begin, ensure you have:
-- **uv**: Python package manager (used for all dependency management in this project) - [Install](https://docs.astral.sh/uv/getting-started/installation/) ([add packages](https://docs.astral.sh/uv/concepts/dependencies/) with `uv add <package>`)
-- **agents-cli**: Agents CLI - Install with `uv tool install google-agents-cli`
-- **Google Cloud SDK**: For GCP services - [Install](https://cloud.google.com/sdk/docs/install)
+| Agent | Model | Tools / capability | Responsibility |
+| --- | --- | --- | --- |
+| PM | gemini-2.5-pro | LLM | Requirements -> features, acceptance criteria, data shapes (the spec) |
+| Architect | gemini-2.5-pro | write_project_file | Spec -> precise API contract (exact status codes, errors, auth) + layered component design + canonical file layout. The single shared ground truth. |
+| Test-writer | gemini-2.5-flash | write_project_file | Unit-first test pyramid: tests/unit first, then tests/api; bound to the contract |
+| Coder | gemini-2.5-pro | read_project_file, list_project_files | Minimal-diff, bottom-up implementation to the canonical files |
+| CodeApplier | deterministic (BaseAgent) | apply_code_change | Writes the coder's CodeChange JSON to disk (decide vs apply split) |
+| DepInstaller | deterministic | install_target_deps (uv) | Creates the target's own .venv + installs baseline deps + requirements |
+| TestRunner | deterministic | run_tests (pytest) | Runs the tests, writes structured results into session state |
+| TestFixer | gemini-2.5-pro | read/list/write_project_file | Repairs TEST errors only (collection/fixture/syntax) — never logic, never app code |
+| TestRunner #2 | deterministic | run_tests | Re-runs after TestFixer so the gate sees post-fix results |
+| KeepBest | deterministic | filesystem snapshot | Snapshots the best-passing source; reverts a regression |
+| Spec-Reviewer | gemini-2.5-pro | read/list_project_file | Advisory compliance review vs contract + deploy lessons |
+| gate (EscalationChecker) | deterministic | — | Escalates (stops the loop) when the tests are GREEN |
+| E2E-QA | gemini-2.5-flash | Playwright MCP | Drives a real browser; Stage 1 local, Stage 2 production |
 
+(Note: these agents don't consume agents-cli "skills"; the "Tools / capability" column is what each uses.)
 
-## Quick Start
+## How the loop works
 
-Install `agents-cli` and its skills if not already installed:
+PM -> Architect -> Test-writer -> LoopAgent[ Coder -> CodeApplier -> DepInstaller -> TestRunner -> TestFixer -> TestRunner#2 -> KeepBest -> Spec-Reviewer -> gate ] -> E2E-QA.
 
-```bash
-uvx google-agents-cli setup
-```
+The loop repeats (max 5-6) until the gate escalates on green tests. Deterministic steps do the mechanical work; LLM agents do the judgment; KeepBest prevents regressions.
 
-Install required packages:
+## Runners
 
-```bash
-agents-cli install
-```
+- run_staged.py — full generate + build loop (no deploy/E2E)
+- run_iterate.py — frozen-artifacts iterate-only loop (contract + tests fixed; runs ONLY the coder loop -> monotonic climb)
+- smoke_pm.py — single-agent (PM) smoke test
 
-Test the agent with a local web server:
+## What made it converge (lessons)
 
-```bash
-agents-cli playground
-```
+1) Architect/contract-first (one shared truth) 2) layered single-responsibility 3) bottom-up test pyramid 4) canonical file layout (no duplicate-file pollution) 5) minimal-diff coder + KeepBest 6) target-venv dep install. Together these moved it from swinging 47%-76% to 59/59 green.
 
-You can also use features from the [ADK](https://adk.dev/) CLI with `uv run adk`.
+## Running it
 
-## Commands
-
-| Command              | Description                                                                                 |
-| -------------------- | ------------------------------------------------------------------------------------------- |
-| `agents-cli install` | Install dependencies using uv                                                         |
-| `agents-cli playground` | Launch local development environment                                                  |
-| `agents-cli lint`    | Run code quality checks                                                               |
-| `agents-cli eval`    | Evaluate agent behavior (generate, grade, analyze, and more — see `agents-cli eval --help`) |
-| `uv run pytest tests/unit tests/integration` | Run unit and integration tests                                                        |
-
-## 🛠️ Project Management
-
-| Command | What It Does |
-|---------|--------------|
-| `agents-cli scaffold enhance` | Add CI/CD pipelines and Terraform infrastructure |
-| `agents-cli infra cicd` | One-command setup of entire CI/CD pipeline + infrastructure |
-| `agents-cli scaffold upgrade` | Auto-upgrade to latest version while preserving customizations |
-
----
-
-## Development
-
-Edit your agent logic in `app/agent.py` and test with `agents-cli playground` - it auto-reloads on save.
-
-## Deployment
-
-```bash
-gcloud config set project <your-project-id>
-agents-cli deploy
-```
-
-To add CI/CD and Terraform, run `agents-cli scaffold enhance`.
-To set up your production infrastructure, run `agents-cli infra cicd`.
-
-## Observability
-
-Built-in telemetry exports to Cloud Trace, BigQuery, and Cloud Logging.
+`agents-cli install`; configure `app/.env` (Vertex: GOOGLE_GENAI_USE_VERTEXAI=True, project, location, TARGET_APP_DIR); then `python run_staged.py`.

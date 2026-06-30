@@ -8,15 +8,15 @@ The following 3 diagrams are in `docs/diagrams/` and can be opened at [excalidra
 
 ### Before (v1)
 - **agent-system-v1**: the first design and why it didn't converge (swung 47%-76%).
-![agent-dev-team v1](docs/diagrams/agent-system-v1.jpg)
+![agent-dev-team v1](docs/diagrams/agent-system-v1.png)
 
 ### Final (optimized)
 - **agent-system-final**: the optimized layered pipeline.
-![agent-dev-team final](docs/diagrams/agent-system-final.jpg)
+![agent-dev-team final](docs/diagrams/agent-system-final.png)
 
 ### Optimization journey
 - **agent-system-journey**: the optimization route (each fix dogfooded from a real failing run).
-![optimization journey](docs/diagrams/agent-system-journey.jpg)
+![optimization journey](docs/diagrams/agent-system-journey.png)
 
 ## Agents
 

@@ -6,9 +6,17 @@ A layered, contract-first multi-agent pipeline (Google ADK + Gemini) that turns 
 
 The following 3 diagrams are in `docs/diagrams/` and can be opened at [excalidraw.com](https://excalidraw.com):
 
+### Before (v1)
 - **agent-system-v1**: the first design and why it didn't converge (swung 47%-76%).
+![agent-dev-team v1](docs/diagrams/agent-system-v1.jpg)
+
+### Final (optimized)
 - **agent-system-final**: the optimized layered pipeline.
+![agent-dev-team final](docs/diagrams/agent-system-final.jpg)
+
+### Optimization journey
 - **agent-system-journey**: the optimization route (each fix dogfooded from a real failing run).
+![optimization journey](docs/diagrams/agent-system-journey.jpg)
 
 ## Agents
 

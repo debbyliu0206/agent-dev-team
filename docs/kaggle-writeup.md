@@ -3,8 +3,8 @@
 > **Subtitle:** A contract-first multi-agent pipeline on Google ADK that gives non-technical users what they actually need: not a coding assistant, but an entire engineering team — PM, architect, test writer, coder, QA, and security review — that converges on green tests.
 
 **Track:** Agents for Business
-**Video:** [YouTube link — attach in Media Gallery]
-**Code:** [GitHub repository link]
+**Video:** https://youtu.be/eRWWXZVOKFE
+**Code:** https://github.com/debbyliu0206/agent-dev-team
 
 ---
 

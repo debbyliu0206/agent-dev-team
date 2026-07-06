@@ -30,8 +30,9 @@ For EVERY backend endpoint, specify exactly:
 - **Behavior rules the tests must agree on** — pick ONE explicitly. E.g. choose either
   "GET /settings returns 404 when none exist" OR "auto-creates defaults and returns 200", not both.
 
-Cover ALL endpoints implied by the spec: sessions CRUD, settings get/update, week/month list/views,
-and auth. No ambiguity, no "TBD". This contract is the single source of truth.
+Cover ALL endpoints implied by the spec — every entity's CRUD operations, every list/summary/stats
+view, and auth if the spec calls for it. No ambiguity, no "TBD". This contract is the single source
+of truth.
 
 ## 2. Component / Function Design Requirements
 Design the backend following a layered architecture + single responsibility principle:
@@ -42,6 +43,7 @@ Design the backend following a layered architecture + single responsibility prin
 - Routes/`main.py` stay THIN (delegate to services).
 
 ## Output — STRICT
+You have exactly ONE tool: `write_project_file`. Never attempt to call any other tool name.
 1. FIRST call the `write_project_file` tool to save the full human-readable API contract to `docs/api_contract.md` AND the component design to `docs/component_design.md`.
 2. THEN your final message must be ONLY this JSON object (no markdown fences, no prose):
 

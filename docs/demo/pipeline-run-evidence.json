@@ -1,0 +1,131 @@
+{
+  "description": "Archived state of the full-pipeline playground run (session 5304e923, 2026-07-04) that autonomously built Job Radar. Preserved as evidence for the writeup: the build loop peaked at 31/40 passing tests before prepaid API credits were exhausted; the remaining fixes were completed by a human developer (disclosed in the writeup).",
+  "session_id": "5304e923-752e-4ace-84e9-09d5f97930a1",
+  "best_passed": 31,
+  "keep_best_action": "restore(best=31)",
+  "best_test_results": {
+    "passed": 31,
+    "failed": 9,
+    "failures": [
+      {
+        "test": "FAILED tests/api/test_auth.py::test_invalid_authentication[post-/api/jobs-data0]",
+        "message": "",
+        "trace": ""
+      },
+      {
+        "test": "FAILED tests/api/test_auth.py::test_invalid_authentication[get-/api/jobs-None]",
+        "message": "",
+        "trace": ""
+      },
+      {
+        "test": "FAILED tests/api/test_auth.py::test_invalid_authentication[patch-/api/jobs/35ccf33c-dfbd-4a22-aca3-a6b781c21cb8-data2]",
+        "message": "",
+        "trace": ""
+      },
+      {
+        "test": "FAILED tests/api/test_auth.py::test_invalid_authentication[delete-/api/jobs/35ccf33c-dfbd-4a22-aca3-a6b781c21cb8-None]",
+        "message": "",
+        "trace": ""
+      },
+      {
+        "test": "FAILED tests/api/test_routes.py::test_get_jobs_success_200 - AssertionError: ...",
+        "message": "",
+        "trace": ""
+      },
+      {
+        "test": "FAILED tests/api/test_routes.py::test_update_job_status_invalid_status_400 - ...",
+        "message": "",
+        "trace": ""
+      },
+      {
+        "test": "FAILED tests/unit/test_services.py::test_get_user_dashboard_sorts_by_deadline",
+        "message": "",
+        "trace": ""
+      },
+      {
+        "test": "FAILED tests/unit/test_services.py::test_get_user_dashboard_summary_statistics",
+        "message": "",
+        "trace": ""
+      },
+      {
+        "test": "FAILED tests/unit/test_services.py::test_get_user_dashboard_stale_flag - Type...",
+        "message": "",
+        "trace": ""
+      }
+    ],
+    "logs": "tes [type=date_from_datetime_inexact, input_value=<MagicMock name='mock.dat...ted' id='2222608962960'>, input_type=MagicMock]\nE       For further information visit https://errors.pydantic.dev/2.13/v/date_from_datetime_inexact\nE   application_deadline\nE     Datetimes provided to dates should have zero time - e.g. be exact dates [type=date_from_datetime_inexact, input_value=<MagicMock name='mock.app...ine' id='2222599268560'>, input_type=MagicMock]\nE       For further information visit https://errors.pydantic.dev/2.13/v/date_from_datetime_inexact\nE   id\nE     Input should be a valid string [type=string_type, input_value=<MagicMock name='mock.id' id='2222599274192'>, input_type=MagicMock]\nE       For further information visit https://errors.pydantic.dev/2.13/v/string_type\nE   user_id\nE     Input should be a valid string [type=string_type, input_value=<MagicMock name='mock.user_id' id='2222602877968'>, input_type=MagicMock]\nE       For further information visit https://errors.pydantic.dev/2.13/v/string_type\n_____________________ test_get_user_dashboard_stale_flag ______________________\ntests\\unit\\test_services.py:174: in test_get_user_dashboard_stale_flag\n    dashboard = services.get_user_dashboard(mock_db_session, \"test_user_id\")\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nbackend\\services.py:48: in get_user_dashboard\n    job_schemas.sort(key=sort_key, reverse=(order == \"desc\"))\nE   TypeError: '<' not supported between instances of 'MagicMock' and 'MagicMock'\n============================== warnings summary ===============================\n.venv\\Lib\\site-packages\\fastapi\\testclient.py:1\n  C:\\Users\\Debby\\Desktop\\Projects\\demo-output\\.venv\\Lib\\site-packages\\fastapi\\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n    from starlette.testclient import TestClient as TestClient  # noqa\n\nbackend\\schemas.py:32\n  C:\\Users\\Debby\\Desktop\\Projects\\demo-output\\backend\\schemas.py:32: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/\n    class JobPosting(JobPostingBase):\n\nbackend\\schemas.py:43\n  C:\\Users\\Debby\\Desktop\\Projects\\demo-output\\backend\\schemas.py:43: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/\n    class JobsSummary(BaseModel):\n\ntests/api/test_routes.py::test_create_job_posting_irrelevant_role_422\n  C:\\Users\\Debby\\Desktop\\Projects\\demo-output\\.venv\\Lib\\site-packages\\anyio\\_backends\\_asyncio.py:1029: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.\n    result = context.run(func, *args)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ===========================\nFAILED tests/api/test_auth.py::test_invalid_authentication[post-/api/jobs-data0]\nFAILED tests/api/test_auth.py::test_invalid_authentication[get-/api/jobs-None]\nFAILED tests/api/test_auth.py::test_invalid_authentication[patch-/api/jobs/35ccf33c-dfbd-4a22-aca3-a6b781c21cb8-data2]\nFAILED tests/api/test_auth.py::test_invalid_authentication[delete-/api/jobs/35ccf33c-dfbd-4a22-aca3-a6b781c21cb8-None]\nFAILED tests/api/test_routes.py::test_get_jobs_success_200 - AssertionError: ...\nFAILED tests/api/test_routes.py::test_update_job_status_invalid_status_400 - ...\nFAILED tests/unit/test_services.py::test_get_user_dashboard_sorts_by_deadline\nFAILED tests/unit/test_services.py::test_get_user_dashboard_summary_statistics\nFAILED tests/unit/test_services.py::test_get_user_dashboard_stale_flag - Type...\n================== 9 failed, 31 passed, 4 warnings in 1.87s ===================\n\n",
+    "no_tests": false
+  },
+  "final_test_results": {
+    "passed": 31,
+    "failed": 9,
+    "failures": [
+      {
+        "test": "FAILED tests/api/test_auth.py::test_invalid_authentication[post-/api/jobs-data0]",
+        "message": "",
+        "trace": ""
+      },
+      {
+        "test": "FAILED tests/api/test_auth.py::test_invalid_authentication[get-/api/jobs-None]",
+        "message": "",
+        "trace": ""
+      },
+      {
+        "test": "FAILED tests/api/test_auth.py::test_invalid_authentication[patch-/api/jobs/35ccf33c-dfbd-4a22-aca3-a6b781c21cb8-data2]",
+        "message": "",
+        "trace": ""
+      },
+      {
+        "test": "FAILED tests/api/test_auth.py::test_invalid_authentication[delete-/api/jobs/35ccf33c-dfbd-4a22-aca3-a6b781c21cb8-None]",
+        "message": "",
+        "trace": ""
+      },
+      {
+        "test": "FAILED tests/api/test_routes.py::test_get_jobs_success_200 - AssertionError: ...",
+        "message": "",
+        "trace": ""
+      },
+      {
+        "test": "FAILED tests/api/test_routes.py::test_update_job_status_invalid_status_400 - ...",
+        "message": "",
+        "trace": ""
+      },
+      {
+        "test": "FAILED tests/unit/test_services.py::test_get_user_dashboard_sorts_by_deadline",
+        "message": "",
+        "trace": ""
+      },
+      {
+        "test": "FAILED tests/unit/test_services.py::test_get_user_dashboard_summary_statistics",
+        "message": "",
+        "trace": ""
+      },
+      {
+        "test": "FAILED tests/unit/test_services.py::test_get_user_dashboard_stale_flag - Type...",
+        "message": "",
+        "trace": ""
+      }
+    ],
+    "logs": "tes [type=date_from_datetime_inexact, input_value=<MagicMock name='mock.dat...ted' id='2222608962960'>, input_type=MagicMock]\nE       For further information visit https://errors.pydantic.dev/2.13/v/date_from_datetime_inexact\nE   application_deadline\nE     Datetimes provided to dates should have zero time - e.g. be exact dates [type=date_from_datetime_inexact, input_value=<MagicMock name='mock.app...ine' id='2222599268560'>, input_type=MagicMock]\nE       For further information visit https://errors.pydantic.dev/2.13/v/date_from_datetime_inexact\nE   id\nE     Input should be a valid string [type=string_type, input_value=<MagicMock name='mock.id' id='2222599274192'>, input_type=MagicMock]\nE       For further information visit https://errors.pydantic.dev/2.13/v/string_type\nE   user_id\nE     Input should be a valid string [type=string_type, input_value=<MagicMock name='mock.user_id' id='2222602877968'>, input_type=MagicMock]\nE       For further information visit https://errors.pydantic.dev/2.13/v/string_type\n_____________________ test_get_user_dashboard_stale_flag ______________________\ntests\\unit\\test_services.py:174: in test_get_user_dashboard_stale_flag\n    dashboard = services.get_user_dashboard(mock_db_session, \"test_user_id\")\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nbackend\\services.py:48: in get_user_dashboard\n    job_schemas.sort(key=sort_key, reverse=(order == \"desc\"))\nE   TypeError: '<' not supported between instances of 'MagicMock' and 'MagicMock'\n============================== warnings summary ===============================\n.venv\\Lib\\site-packages\\fastapi\\testclient.py:1\n  C:\\Users\\Debby\\Desktop\\Projects\\demo-output\\.venv\\Lib\\site-packages\\fastapi\\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n    from starlette.testclient import TestClient as TestClient  # noqa\n\nbackend\\schemas.py:32\n  C:\\Users\\Debby\\Desktop\\Projects\\demo-output\\backend\\schemas.py:32: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/\n    class JobPosting(JobPostingBase):\n\nbackend\\schemas.py:43\n  C:\\Users\\Debby\\Desktop\\Projects\\demo-output\\backend\\schemas.py:43: PydanticDeprecatedSince20: Support for class-based `config` is deprecated, use ConfigDict instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/\n    class JobsSummary(BaseModel):\n\ntests/api/test_routes.py::test_create_job_posting_irrelevant_role_422\n  C:\\Users\\Debby\\Desktop\\Projects\\demo-output\\.venv\\Lib\\site-packages\\anyio\\_backends\\_asyncio.py:1029: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.\n    result = context.run(func, *args)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ===========================\nFAILED tests/api/test_auth.py::test_invalid_authentication[post-/api/jobs-data0]\nFAILED tests/api/test_auth.py::test_invalid_authentication[get-/api/jobs-None]\nFAILED tests/api/test_auth.py::test_invalid_authentication[patch-/api/jobs/35ccf33c-dfbd-4a22-aca3-a6b781c21cb8-data2]\nFAILED tests/api/test_auth.py::test_invalid_authentication[delete-/api/jobs/35ccf33c-dfbd-4a22-aca3-a6b781c21cb8-None]\nFAILED tests/api/test_routes.py::test_get_jobs_success_200 - AssertionError: ...\nFAILED tests/api/test_routes.py::test_update_job_status_invalid_status_400 - ...\nFAILED tests/unit/test_services.py::test_get_user_dashboard_sorts_by_deadline\nFAILED tests/unit/test_services.py::test_get_user_dashboard_summary_statistics\nFAILED tests/unit/test_services.py::test_get_user_dashboard_stale_flag - Type...\n================== 9 failed, 31 passed, 4 warnings in 1.87s ===================\n\n",
+    "no_tests": false
+  },
+  "state_keys": [
+    "__session_metadata__",
+    "api_contract",
+    "applied_files",
+    "best_passed",
+    "best_test_results",
+    "code_change",
+    "dep_install",
+    "e2e_report",
+    "feedback_classification",
+    "keep_best",
+    "review",
+    "spec",
+    "test_fix",
+    "test_results",
+    "test_suite",
+    "user_test_guide"
+  ],
+  "num_events": 116
+}

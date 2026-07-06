@@ -1,0 +1,59 @@
+{
+  "eval_cases": [
+    {
+      "eval_case_id": "todo_api",
+      "prompt": {
+        "role": "user",
+        "parts": [
+          {
+            "text": "Build me a simple TODO API with FastAPI. I need endpoints to create, read, update, and delete todos. Each todo has a title, description, and completed status. Use SQLite for storage."
+          }
+        ]
+      }
+    },
+    {
+      "eval_case_id": "user_auth",
+      "prompt": {
+        "role": "user",
+        "parts": [
+          {
+            "text": "I need a user authentication service with FastAPI. Support registration with email/password, login that returns a JWT token, and a protected /me endpoint that returns the current user profile. Use SQLite and bcrypt for password hashing."
+          }
+        ]
+      }
+    },
+    {
+      "eval_case_id": "blog_api",
+      "prompt": {
+        "role": "user",
+        "parts": [
+          {
+            "text": "Create a blog API with posts and comments. Posts have a title, content, and author. Comments belong to a post and have content and author. I need CRUD for both posts and comments, plus an endpoint to get all comments for a post. Use FastAPI and SQLite."
+          }
+        ]
+      }
+    },
+    {
+      "eval_case_id": "expense_tracker",
+      "prompt": {
+        "role": "user",
+        "parts": [
+          {
+            "text": "Build an expense tracking API. Users can record expenses with amount, category, date, and notes. I need endpoints to add expenses, list expenses with optional date range filtering, get spending summary by category, and delete expenses. FastAPI + SQLite."
+          }
+        ]
+      }
+    },
+    {
+      "eval_case_id": "bookmark_manager",
+      "prompt": {
+        "role": "user",
+        "parts": [
+          {
+            "text": "I want a bookmark manager API. Users can save bookmarks with URL, title, description, and tags. I need CRUD operations, search by tag, and an endpoint that checks if a URL is already bookmarked. FastAPI + SQLite."
+          }
+        ]
+      }
+    }
+  ]
+}

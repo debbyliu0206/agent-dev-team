@@ -1,0 +1,247 @@
+{
+  "features": [
+    {
+      "id": "f1",
+      "title": "Add and Filter a New Job Posting",
+      "description": "As a user, I can submit a job posting via a URL. The system should automatically categorize it, reject irrelevant roles, and merge duplicates."
+    },
+    {
+      "id": "f2",
+      "title": "View and Manage the Job Dashboard",
+      "description": "As a user, I can view all my tracked jobs in a sorted table, update their status, see visual flags for stale entries, and view summary statistics."
+    }
+  ],
+  "data_contracts": [
+    {
+      "entity": "JobPosting",
+      "input": {
+        "source_url": "string (url)",
+        "company_name": "string",
+        "role_title": "string",
+        "date_posted": "string (date)",
+        "application_deadline": "string (date, optional)"
+      },
+      "output": {
+        "id": "string (uuid)",
+        "company_name": "string",
+        "role_title": "string",
+        "source_url": "string (url)",
+        "date_posted": "string (date)",
+        "application_deadline": "string (date, optional)",
+        "status": "string (Saved, Applied, Interviewing, Offer, Rejected)",
+        "category": "string (Software Engineer, AI Engineer, Data Engineer, Ignored)",
+        "last_updated": "string (datetime)"
+      },
+      "example": {
+        "id": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+        "company_name": "Innovate AI Corp",
+        "role_title": "Junior AI Engineer",
+        "source_url": "https://innovatecorp.com/careers/jr-ai-engineer",
+        "date_posted": "2024-07-20",
+        "application_deadline": "2024-08-15",
+        "status": "Saved",
+        "category": "AI Engineer",
+        "last_updated": "2024-07-21T10:00:00Z"
+      },
+      "endpoints": [
+        {
+          "method": "POST",
+          "path": "/api/jobs",
+          "request_body": {
+            "source_url": "string",
+            "company_name": "string",
+            "role_title": "string",
+            "date_posted": "string (YYYY-MM-DD)",
+            "application_deadline": "string (YYYY-MM-DD, optional)"
+          },
+          "success_response": {
+            "status": 201,
+            "body": {
+              "id": "string",
+              "company_name": "string",
+              "role_title": "string",
+              "source_url": "string",
+              "date_posted": "string",
+              "application_deadline": "string",
+              "status": "Saved",
+              "category": "string",
+              "last_updated": "string"
+            }
+          },
+          "error_responses": [
+            {
+              "status": 400,
+              "body": {
+                "detail": "Invalid input data provided."
+              }
+            },
+            {
+              "status": 422,
+              "body": {
+                "detail": "Job posting is not an entry-level engineering role."
+              }
+            }
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/jobs",
+          "request_body": null,
+          "success_response": {
+            "status": 200,
+            "body": [
+              {
+                "id": "string",
+                "company_name": "string",
+                "role_title": "string",
+                "source_url": "string",
+                "date_posted": "string",
+                "application_deadline": "string",
+                "status": "string",
+                "category": "string",
+                "last_updated": "string"
+              }
+            ]
+          },
+          "error_responses": []
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/jobs/{job_id}",
+          "request_body": {
+            "status": "string (must be one of: Saved, Applied, Interviewing, Offer, Rejected)"
+          },
+          "success_response": {
+            "status": 200,
+            "body": {
+              "id": "string",
+              "company_name": "string",
+              "role_title": "string",
+              "source_url": "string",
+              "date_posted": "string",
+              "application_deadline": "string",
+              "status": "string",
+              "category": "string",
+              "last_updated": "string"
+            }
+          },
+          "error_responses": [
+            {
+              "status": 400,
+              "body": {
+                "detail": "Invalid status value provided."
+              }
+            },
+            {
+              "status": 404,
+              "body": {
+                "detail": "Job posting not found."
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "ac1",
+      "feature_id": "f1",
+      "given": "I am logged in",
+      "when": "I submit a URL for a job titled 'Entry-Level AI Engineer'",
+      "then": "the system saves a new job posting, classifies it under the 'AI Engineer' category, and I see it on my dashboard"
+    },
+    {
+      "id": "ac2",
+      "feature_id": "f1",
+      "given": "I am logged in",
+      "when": "I submit a URL for a job titled 'Senior Product Manager'",
+      "then": "the system rejects the posting, and I see a message saying 'Job posting is not an entry-level engineering role.'"
+    },
+    {
+      "id": "ac3",
+      "feature_id": "f1",
+      "given": "a job from 'Innovate AI Corp' for 'Junior AI Engineer' already exists",
+      "when": "I submit a new URL from a different source for the same company and role title",
+      "then": "the system does not create a new job, but instead merges the new source URL into the existing job entry"
+    },
+    {
+      "id": "ac4",
+      "feature_id": "f2",
+      "given": "I have several saved job postings with different deadlines",
+      "when": "I load the dashboard page",
+      "then": "I see a table of my jobs, sorted by the soonest application_deadline first"
+    },
+    {
+      "id": "ac5",
+      "feature_id": "f2",
+      "given": "I have a job with the status 'Saved'",
+      "when": "I change its status to 'Applied'",
+      "then": "the job's status is updated to 'Applied' and the last_updated timestamp is set to the current time"
+    },
+    {
+      "id": "ac6",
+      "feature_id": "f2",
+      "given": "I have a job that I haven't updated in more than 7 days",
+      "when": "I view the dashboard",
+      "then": "that job's row in the table has a visual flag or warning icon next to it"
+    },
+    {
+      "id": "ac7",
+      "feature_id": "f2",
+      "given": "I have 5 jobs saved, with 2 'Applied' and 3 'Saved'",
+      "when": "I view the dashboard",
+      "then": "I see a summary section displaying total jobs, counts per status, and counts per category"
+    }
+  ],
+  "tech_stack": {
+    "app_type": "Web application",
+    "frontend": "React (SPA)",
+    "backend": "Python (FastAPI)",
+    "db": "PostgreSQL",
+    "auth": "Managed service",
+    "hosting": "Render",
+    "api_style": "REST"
+  },
+  "architecture": {
+    "layers": [
+      "routes",
+      "services",
+      "crud",
+      "validators",
+      "schemas"
+    ],
+    "auth_scheme": "Bearer token via Authorization header",
+    "auth_error_responses": {
+      "missing": {
+        "status": 401,
+        "body": {
+          "detail": "Not authenticated"
+        }
+      },
+      "invalid": {
+        "status": 403,
+        "body": {
+          "detail": "Invalid or expired token"
+        }
+      }
+    },
+    "file_layout": {
+      "backend/main.py": "App entry point and FastAPI app instantiation",
+      "backend/routes.py": "Thin HTTP route handlers for /api/jobs",
+      "backend/services.py": "Business logic for creating, filtering, and updating jobs",
+      "backend/crud.py": "Database operations (Create, Read, Update) for JobPostings",
+      "backend/schemas.py": "Pydantic models for request/response data shapes",
+      "backend/validators.py": "Input validation, including role title filtering logic",
+      "backend/auth.py": "Authentication dependency logic for securing routes",
+      "backend/database.py": "Database connection setup and session management",
+      "backend/config.py": "Settings and environment variable management",
+      "tests/unit/test_validators.py": "Unit tests for the job filtering logic",
+      "tests/unit/test_crud.py": "Unit tests for database operations with a mock DB",
+      "tests/unit/test_services.py": "Unit tests for business logic with mock CRUD functions",
+      "tests/api/test_routes.py": "API integration tests for the /api/jobs endpoints",
+      "tests/api/test_auth.py": "API integration tests for authentication and secured routes"
+    },
+    "test_strategy": "Bottom-up: unit tests for validators/crud/services first, then API integration tests"
+  }
+}

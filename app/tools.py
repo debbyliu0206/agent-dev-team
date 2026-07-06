@@ -1,9 +1,12 @@
+import logging
 import os
 import re
 import sys
 import json
 import subprocess
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 def _get_target_dir() -> Path:
     target = os.environ.get("TARGET_APP_DIR")
@@ -48,23 +51,75 @@ def list_project_files(subdir: str = ".") -> dict:
     except Exception as e:
         return {"status": "error", "message": str(e)}
 
+def validate_generated_code(code: str, filepath: str) -> dict:
+    """Quick safety pre-check on generated code before it is written to disk.
+
+    Catches the most critical dangerous patterns at the tool level.  The full
+    scanner in guardrails/ does the heavy lifting; this is a lightweight gate
+    so obviously-bad code never touches the filesystem.
+
+    Returns {"safe": True/False, "violations": [str]}.
+    """
+    violations: list[str] = []
+
+    # os.system() — arbitrary shell execution
+    if re.search(r"\bos\.system\s*\(", code):
+        violations.append(f"{filepath}: use of os.system() is blocked")
+
+    # eval() not preceded by 'json.' — arbitrary code execution
+    if re.search(r"(?<!json\.)\beval\s*\(", code):
+        violations.append(f"{filepath}: use of eval() is blocked (json.loads is the safe alternative)")
+
+    # exec() — arbitrary code execution
+    if re.search(r"\bexec\s*\(", code):
+        violations.append(f"{filepath}: use of exec() is blocked")
+
+    # subprocess calls that sneak in a global pip install, bypassing our DepInstaller
+    if re.search(r"\bsubprocess\b", code) and re.search(r"pip\s+install", code):
+        violations.append(
+            f"{filepath}: subprocess + 'pip install' is blocked — "
+            "use the project's install_target_deps tool instead"
+        )
+
+    return {"safe": len(violations) == 0, "violations": violations}
+
+
 def apply_code_change(code_change_json: str) -> dict:
     """Parses CodeChange JSON and applies each FileChange to the TARGET_APP_DIR.
     Rejects any modification under a 'tests' directory to enforce separation of concerns."""
     try:
         change = json.loads(code_change_json)
         files = change.get("files", [])
+
+        # --- Pre-flight validation (atomic: reject ALL files if ANY is unsafe) ---
+        all_violations: list[str] = []
+        for f in files:
+            path = f.get("path", "")
+            content = f.get("content", "")
+            action = f.get("action")
+            if action in ("create", "modify") and content:
+                result = validate_generated_code(content, path)
+                if not result["safe"]:
+                    all_violations.extend(result["violations"])
+        if all_violations:
+            return {
+                "status": "error",
+                "message": "Code safety check failed — no files were written",
+                "violations": all_violations,
+            }
+
+        # --- Apply changes ---
         results = []
         for f in files:
             path = f.get("path")
             content = f.get("content", "")
             action = f.get("action")
-            
+
             if "tests/" in path.replace("\\", "/"):
                 return {"status": "error", "message": f"Coder is not allowed to edit test files: {path}"}
-                
+
             full_path = _enforce_target_dir(path)
-            
+
             if action == "create" or action == "modify":
                 full_path.parent.mkdir(parents=True, exist_ok=True)
                 full_path.write_text(content, encoding="utf-8")
@@ -75,7 +130,7 @@ def apply_code_change(code_change_json: str) -> dict:
                 results.append({"path": path, "action": "delete", "status": "success"})
             else:
                 results.append({"path": path, "action": action, "status": "error", "message": "Unknown action"})
-                
+
         return {"status": "success", "results": results}
     except Exception as e:
         return {"status": "error", "message": str(e)}
@@ -103,13 +158,46 @@ def install_target_deps() -> dict:
         # coder forgot to write requirements.txt (then requirements.txt is layered on top).
         cmd = ["uv", "pip", "install", "--python", str(vpy),
                "pytest", "pytest-asyncio", "fastapi", "uvicorn", "httpx", "pytz"]
+        warnings: list[str] = []
         req = target_dir / "requirements.txt"
         if req.exists():
-            cmd += ["-r", str(req)]
+            # Validate requirements.txt: strip suspicious lines that could compromise
+            # the install (malicious index URLs, editable installs from git, local paths).
+            raw_lines = req.read_text(encoding="utf-8").splitlines()
+            clean_lines: list[str] = []
+            for line in raw_lines:
+                stripped = line.strip()
+                if not stripped or stripped.startswith("#"):
+                    clean_lines.append(line)
+                    continue
+                lower = stripped.lower()
+                if "--index-url" in lower or "--extra-index-url" in lower:
+                    warnings.append(f"Stripped suspicious index redirect: {stripped}")
+                elif (lower.startswith("-e ") or lower.startswith("--editable ")) and (
+                    "://" in stripped
+                ):
+                    warnings.append(f"Stripped suspicious editable install: {stripped}")
+                elif "file://" in lower:
+                    warnings.append(f"Stripped suspicious file:// path: {stripped}")
+                else:
+                    clean_lines.append(line)
+            if warnings:
+                for w in warnings:
+                    logger.warning("[install_target_deps] %s", w)
+                # Write sanitised requirements to a temp file so we never pass
+                # the suspicious lines to pip.
+                safe_req = target_dir / ".requirements_safe.txt"
+                safe_req.write_text("\n".join(clean_lines), encoding="utf-8")
+                cmd += ["-r", str(safe_req)]
+            else:
+                cmd += ["-r", str(req)]
         r = subprocess.run(cmd, cwd=str(target_dir), capture_output=True, text=True)
+        logs = ((r.stdout or "") + (r.stderr or ""))[-2000:]
+        if warnings:
+            logs = "[SANDBOX] " + "; ".join(warnings) + "\n" + logs
         return {
             "status": "success" if r.returncode == 0 else "error",
-            "logs": ((r.stdout or "") + (r.stderr or ""))[-2000:],
+            "logs": logs[-2000:],
         }
     except Exception as e:
         return {"status": "error", "message": str(e)}
@@ -126,6 +214,7 @@ def run_tests(test_path: str = ".") -> dict:
         target_dir = _get_target_dir()
         result = subprocess.run(
             [_target_python(), "-m", "pytest", test_path, "-v", "--tb=short",
+             "--rootdir", str(target_dir),
              "--import-mode=importlib", "-o", "asyncio_mode=auto"],
             cwd=str(target_dir),
             capture_output=True,
@@ -158,7 +247,10 @@ def run_tests(test_path: str = ".") -> dict:
             "passed": passed,
             "failed": failed,
             "failures": failures,
-            "logs": out[-4000:],
+            # Keep enough log tail that several full --tb=short tracebacks
+            # survive: with many failures, 4000 chars was only the summary
+            # list, so the coder never saw the actual error text.
+            "logs": out[-12000:],
             "no_tests": no_tests,
         }
     except Exception as e:

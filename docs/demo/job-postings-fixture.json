@@ -1,0 +1,131 @@
+{
+  "description": "Demo fixture: job postings as a crawler would deliver them to the Job Radar ingestion API. Mix of matching roles (new-grad/intern SWE, AI Engineer, Data Engineering), cross-source duplicates (to demo dedup), and non-matching posts (to demo classification rejection).",
+  "postings": [
+    {
+      "source": "reddit:r/csMajors",
+      "source_url": "https://www.reddit.com/r/csMajors/comments/1lq2ab/google_swe_new_grad_2027_is_open/",
+      "company": "Google",
+      "title": "Software Engineer, New Grad (2027 Start)",
+      "body": "Google just opened the SWE new grad 2027 pipeline. US locations: MTV, NYC, Seattle. BS/MS in CS or related. Apply through careers page, referral helps. Posting says applications reviewed on a rolling basis.",
+      "posted_date": "2026-07-01",
+      "deadline": "2026-09-30"
+    },
+    {
+      "source": "careers:google.com",
+      "source_url": "https://careers.google.com/jobs/results/swe-early-2027/",
+      "company": "Google",
+      "title": "Software Engineer, New Grad (2027 Start)",
+      "body": "Bachelor's degree in Computer Science or equivalent practical experience. Design, develop, test, deploy, maintain, and improve software. Multiple US locations.",
+      "posted_date": "2026-06-30",
+      "deadline": "2026-09-30"
+    },
+    {
+      "source": "reddit:r/cscareerquestions",
+      "source_url": "https://www.reddit.com/r/cscareerquestions/comments/1lp9xy/anthropic_ai_engineer_entry/",
+      "company": "Anthropic",
+      "title": "AI Engineer (Entry Level) — Applied AI Team",
+      "body": "Anthropic is hiring entry-level AI engineers for the applied team. Python, LLM app experience (RAG, agents, evals) counts more than years of experience. SF or remote-US.",
+      "posted_date": "2026-06-28",
+      "deadline": "2026-08-15"
+    },
+    {
+      "source": "careers:openai.com",
+      "source_url": "https://openai.com/careers/software-engineer-new-grad/",
+      "company": "OpenAI",
+      "title": "Software Engineer, New Grad",
+      "body": "Join our engineering team building products used by hundreds of millions. Strong CS fundamentals, systems or ML experience a plus. San Francisco, hybrid.",
+      "posted_date": "2026-07-02",
+      "deadline": "2026-08-31"
+    },
+    {
+      "source": "reddit:r/csMajors",
+      "source_url": "https://www.reddit.com/r/csMajors/comments/1lqm3z/meta_data_engineer_intern_fall/",
+      "company": "Meta",
+      "title": "Data Engineer Intern (Fall 2026)",
+      "body": "Meta opened Fall 2026 data engineering internships. SQL + Python screens, then a pipeline design round. Menlo Park / NYC / remote options.",
+      "posted_date": "2026-06-29",
+      "deadline": "2026-07-25"
+    },
+    {
+      "source": "careers:databricks.com",
+      "source_url": "https://www.databricks.com/company/careers/university-recruiting/data-engineer-new-grad",
+      "company": "Databricks",
+      "title": "Data Engineer, New Grad (University Recruiting)",
+      "body": "Build and operate large-scale data pipelines on the lakehouse. Spark, SQL, Python. Mountain View or Seattle.",
+      "posted_date": "2026-06-25",
+      "deadline": "2026-08-01"
+    },
+    {
+      "source": "reddit:r/MachineLearningJobs",
+      "source_url": "https://www.reddit.com/r/MachineLearningJobs/comments/1lrn8k/deepmind_research_engineer_intern/",
+      "company": "Google DeepMind",
+      "title": "Research Engineer Intern (AI), Winter 2027",
+      "body": "DeepMind winter internship for research engineering. Strong Python/JAX or PyTorch. MS/PhD preferred but exceptional BS candidates considered. London or Mountain View.",
+      "posted_date": "2026-07-03",
+      "deadline": "2026-08-20"
+    },
+    {
+      "source": "careers:stripe.com",
+      "source_url": "https://stripe.com/jobs/listing/software-engineer-new-grad-2027",
+      "company": "Stripe",
+      "title": "Software Engineer, New Grad (2027)",
+      "body": "Work on payments infrastructure processing hundreds of billions annually. Any strong general software engineering background. SF, NYC, Seattle, or remote.",
+      "posted_date": "2026-07-01",
+      "deadline": "2026-10-15"
+    },
+    {
+      "source": "reddit:r/cscareerquestions",
+      "source_url": "https://www.reddit.com/r/cscareerquestions/comments/1lps4d/stripe_new_grad_thread/",
+      "company": "Stripe",
+      "title": "Software Engineer, New Grad (2027)",
+      "body": "Stripe's 2027 new grad SWE posting is live, same as every year expect HackerRank within a week of applying. Deadline listed as mid-October.",
+      "posted_date": "2026-07-02",
+      "deadline": "2026-10-15"
+    },
+    {
+      "source": "careers:nvidia.com",
+      "source_url": "https://www.nvidia.com/en-us/about-nvidia/careers/ai-engineer-early-career/",
+      "company": "NVIDIA",
+      "title": "AI Engineer, Early Career — Inference Platforms",
+      "body": "Optimize and deploy LLM inference at scale. CUDA a plus, strong Python/C++ required. Santa Clara or Austin.",
+      "posted_date": "2026-06-27",
+      "deadline": "2026-08-10"
+    },
+    {
+      "source": "reddit:r/csMajors",
+      "source_url": "https://www.reddit.com/r/csMajors/comments/1lqz7p/amazon_sde1_2027_us/",
+      "company": "Amazon",
+      "title": "SDE I (2027 New Grad) — US",
+      "body": "Amazon SDE1 2027 applications open. OA usually arrives within days. Multiple US locations, team-matching after offer.",
+      "posted_date": "2026-07-03",
+      "deadline": "2026-09-15"
+    },
+    {
+      "source": "careers:netflix.com",
+      "source_url": "https://jobs.netflix.com/jobs/senior-software-engineer-streaming",
+      "company": "Netflix",
+      "title": "Senior Software Architect — Streaming Algorithms (L6)",
+      "body": "8+ years of experience building large-scale distributed systems. Expert-level knowledge of video streaming protocols.",
+      "posted_date": "2026-06-30",
+      "deadline": "2026-08-30"
+    },
+    {
+      "source": "reddit:r/ProductManagement",
+      "source_url": "https://www.reddit.com/r/ProductManagement/comments/1lrb2c/airbnb_apm_2027/",
+      "company": "Airbnb",
+      "title": "Associate Product Manager Program 2027",
+      "body": "Airbnb APM program open for 2027. Not an engineering role — product sense interviews plus analytics case.",
+      "posted_date": "2026-07-01",
+      "deadline": "2026-08-05"
+    },
+    {
+      "source": "careers:salesforce.com",
+      "source_url": "https://careers.salesforce.com/en/jobs/marketing-associate-2026/",
+      "company": "Salesforce",
+      "title": "Marketing Associate, Early Career",
+      "body": "Support campaign operations and content marketing for the platform business unit. Communications or marketing degree preferred.",
+      "posted_date": "2026-06-26",
+      "deadline": "2026-07-31"
+    }
+  ]
+}

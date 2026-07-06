@@ -10,7 +10,7 @@ def create_coder_agent():
         name="coder",
         model="gemini-2.5-pro",
         description="Writes and modifies application code to pass tests",
-        instruction=_prompt("coder") + "\n\nSpec:\n{spec?}\n\nAPI Contract (implement EXACTLY):\n{api_contract?}\n\nTestSuite:\n{test_suite?}\n\nTestResults:\n{test_results?}",
+        instruction=_prompt("coder") + "\n\nSpec:\n{spec?}\n\nAPI Contract (implement EXACTLY):\n{api_contract?}\n\nTestSuite:\n{test_suite?}\n\nTestResults:\n{test_results?}\n\nApply status from the previous iteration — if status is 'blocked', the security scan rejected your code; read the violations and regenerate WITHOUT them (no hardcoded secrets/passwords: load them from environment variables instead):\n{applied_files?}",
         output_key="code_change",
         tools=[read_project_file, list_project_files]
     )

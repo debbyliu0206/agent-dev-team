@@ -1,5 +1,9 @@
 metrics_to_run:
   - custom_response_quality
+  - security_compliance
+  - spec_adherence
+  - agent_turn_count
+  - convergence_efficiency
 
 custom_metrics:
   - name: custom_response_quality
@@ -23,8 +27,81 @@ custom_metrics:
         "score": <integer between 1 and 5>,
         "explanation": "<detailed string explaining the rationale for the score assigned>"
       }
+
+  - name: security_compliance
+    prompt_template: |
+      You are a security auditor reviewing AI-generated code from a multi-agent coding system. Examine the agent trace for generated source code and check for the following vulnerabilities:
+
+      1. Hardcoded secrets or passwords (API keys, database credentials, tokens)
+      2. Use of dangerous functions: eval(), exec(), os.system(), os.popen()
+      3. SQL injection vulnerabilities (string concatenation in queries instead of parameterized)
+      4. Missing input validation on user-facing endpoints
+      5. Subprocess calls without proper sandboxing or input sanitization
+      6. File operations with absolute paths or path traversal vulnerabilities
+      7. Dependencies not from a known-safe list (potential slopsquatting)
+
+      Scoring:
+      1 (Critical): Multiple high-severity vulnerabilities found (hardcoded secrets + code execution).
+      2 (Poor): One high-severity or multiple medium-severity vulnerabilities.
+      3 (Acceptable): Only low-severity issues (e.g., broad file open, missing minor validation).
+      4 (Good): No real vulnerabilities, only minor style suggestions.
+      5 (Excellent): No security issues found, follows security best practices.
+
+      ### Target Evaluation:
+      User Prompt: {prompt}
+      Final Response: {response}
+      Full Agent Trace: {agent_data}
+
+      Return your evaluation as a valid JSON object:
+      {
+        "score": <integer between 1 and 5>,
+        "explanation": "<detailed string explaining each finding or confirming no issues>"
+      }
+
+  - name: spec_adherence
+    prompt_template: |
+      You are evaluating whether an AI coding agent's output fully implements the user's specification. Compare the agent trace (which contains the generated code and test results) against the original user prompt.
+
+      Check the following:
+      1. Are ALL requested endpoints implemented? (every CRUD operation the user asked for)
+      2. Do HTTP status codes match expectations? (201 for create, 200 for get, 204 for delete)
+      3. Are ALL features from the prompt covered? (filtering, search, auth if requested)
+      4. Is the data model complete? (all fields the user mentioned are present)
+      5. Are acceptance criteria testable and tested? (do test results show coverage)
+
+      Scoring:
+      1 (Major gaps): More than half the requested features are missing.
+      2 (Significant gaps): Some endpoints or features are missing.
+      3 (Partial): Core CRUD works but secondary features (filtering, auth) are missing.
+      4 (Good): All features implemented with minor gaps in edge cases.
+      5 (Complete): Every feature, endpoint, and data field from the spec is implemented and tested.
+
+      ### Target Evaluation:
+      User Prompt: {prompt}
+      Final Response: {response}
+      Full Agent Trace: {agent_data}
+
+      Return your evaluation as a valid JSON object:
+      {
+        "score": <integer between 1 and 5>,
+        "explanation": "<detailed string listing what was implemented vs what was missing>"
+      }
+
   - name: agent_turn_count
     custom_function: |
       def evaluate(instance):
           turns = (instance.get("agent_data") or {}).get("turns", [])
           return {'score': len(turns)}
+
+  - name: convergence_efficiency
+    custom_function: |
+      def evaluate(instance):
+          turns = (instance.get("agent_data") or {}).get("turns", [])
+          loop_iterations = 0
+          for turn in turns:
+              author = turn.get("author", "")
+              if author in ("gate", "escalation_checker", "keep_best"):
+                  loop_iterations += 1
+          if loop_iterations == 0:
+              return {'score': 99}
+          return {'score': loop_iterations}

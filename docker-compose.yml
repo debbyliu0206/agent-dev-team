@@ -1,0 +1,13 @@
+services:
+  agent-dev-team:
+    build: .
+    environment:
+      - GOOGLE_GENAI_USE_VERTEXAI
+      - GOOGLE_CLOUD_PROJECT
+      - GOOGLE_CLOUD_LOCATION
+      - TARGET_APP_DIR=/workspace/target
+    volumes:
+      - ./target:/workspace/target
+    ports:
+      - "8080:8080"
+    restart: unless-stopped

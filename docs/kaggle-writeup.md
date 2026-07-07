@@ -122,7 +122,7 @@ The budget ceiling itself became a technical finding. Each build-loop iteration 
 ## Future Work
 
 - **Token/cost efficiency** — the top priority after this build: delta-only test reports between iterations, context pruning, routing more loop roles to Flash, and the frozen-artifacts iterate mode (already in the repo) that skips spec/test regeneration on re-runs
-- **Environment contracts** — the Architect should pin exact dependency versions the way it pins status codes; version drift proved to be contract drift
+- **Environment contracts** — the Architect should pin exact dependency versions the way it pins status codes; version drift proved to be contract drift. We reported this finding upstream as a proposed "verify against official docs" step in [google/agents-cli#44](https://github.com/google/agents-cli/issues/44), which a maintainer has accepted and self-assigned
 - **Frontend generation** — extending contract-first convergence to React/Vue frontends
 - **Cross-run memory** — learning from classified user feedback across sessions
 - **Chat-platform access** — Slack/Feishu MCP for conversational use and remote approvals
